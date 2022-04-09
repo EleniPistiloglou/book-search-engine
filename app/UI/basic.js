@@ -55,11 +55,9 @@ const basic = {template: `
         <div class="card" style="margin-left: 6%; 
         margin-right: 6%;">
             <div class="card-body">
-            <h5 class="card-title"> {{doc[0]}} </h5>
-            <h6 class="card-subtitle text-muted"> {{doc[1]}} </h6>
-            <p class="card-text">Welcome to Tutlane. Its card sample text.</p>
-            <a href="#" class="card-link">Link1</a>
-            <a href="#" class="card-link">Link2</a>
+            <h5 class="card-title"> {{doc[1]}} </h5>
+            <h6 class="card-subtitle text-muted"> by {{doc[2]}} </h6>
+            <a :href="'https://www.gutenberg.org/ebooks/' + doc[0]" class="card-link">Gutenberg link</a>
             </div>
         </div>
     </div>
@@ -77,8 +75,12 @@ data(){
 },
 methods:{
     refreshData(){console.log(this.keyword);
+        this.documents=[];
         if(this.keyword !== "")
-            axios.get(variables.API_URL+"basic/"+this.keyword)
+            axios.get(variables.API_URL+"basic/", {
+                params: {
+                  keyword: this.keyword
+                }})
             .then((response) => {
                 this.documents=response.data;
                 console.log(response.data[0]);

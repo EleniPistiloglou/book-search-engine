@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<style>
+    body{
+        background-image: url("assets/background_image.jpg");
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    
+    .containerTitle {margin-top: 2% ; margin-left: 2%; margin-right: 2%;}
+    .container {margin-top: 8%; margin-left:5%; margin-right:5%;}
+    ul {  list-style-type: none;  }
+    .to_search  {  width: 50%;  float: left; text-align: center; }
+    a {color: black; }
+    a:hover {color: white; }
+</style>
+
+<body>
+
+<div id="app" class="containerTitle">
+
+    <div style="display:flex;">
+        <h3 >
+            GuttenSearch
+        </h3>
+        <h6 style="margin-top:10px; margin-left:30px;">
+            The advanced book search tool created for the Guttenberg data base
+        </h6>
+    </div>
+
+    <div class="container">
+        <div class="to_search">
+                <router-link 
+                    
+                    
+                    to="/basic">
+                
+                    <button style="
+                        width: 100%; 
+                        height: 8%; 
+                        background-color: #212121; 
+                        color: white; 
+                        font-size: 24px;
+                        border: 6px solid #212121;
+                        margin-bottom: 2%;
+                        margin-right: 1%;">Basic search</button>
+
+                
+                </router-link> 
+        </div>
+        <div class="to_search">
+                <router-link 
+                style=" 
+                    text-decoration: none; 
+                    " 
+                to="/advanced">
+            
+                <button style="
+                    width: 100%; 
+                    height: 8%; 
+                    background-color: #212121; 
+                    color: white;
+                    font-size: 24px;
+                    border: 6px solid #212121;
+                    margin-bottom: 2%;
+                    margin-left: 1%;">Advanced search</button>
+
+            
+            </router-link>
+        </div>
+
+
+    </div>
+    
+
+
+
+<router-view></router-view>
+
+</div>
+
+    <script src="variables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://unpkg.com/vue-router@3"></script>
+
+    <script src="basic.js"></script>
+    <script src="advanced.js"></script>
+    <script src="app.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

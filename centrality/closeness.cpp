@@ -3,34 +3,19 @@
 #include<string>
 #include<map>
 #include<set>
+#include<vector>
+#include<queue>
 
 using namespace std;
-/*
-class Arc {
-    public:
-    Arc(int a, int b, float c) {src=a; dst=b; weight=c; }
-    int get_src(){return src;}
-    int get_dst() {return dst;}
-    int get_weight() {return weight;}\
-    void read(fstream &is) {
 
-    }
-    private:
-    
-    int src; int dst; float weight;
+class Pair_comparison {
+public:
+  bool operator() (const pair<int, float>& lhs, const pair<int,float>&rhs) const
+  {
+    return (lhs.second < rhs.second);
+  }
 };
 
-class Weighted_edge {
-    public:
-    Weighted_edge(){}
-    Weighted_edge(int d, float w){dst=d; weight=w;}
-    int get_dst(){return dst;}
-    float get_weight(){return weight;}
-    void print(){ cout << dst << " " << weight << "\n"; }
-
-    private:
-    int dst;float weight;
-};*/
 
 class Graph {
     public:
@@ -41,6 +26,7 @@ class Graph {
         if (input_file.is_open()){ 
             int s,d; float w;
             input_file >> nbr_of_uedges;
+            nbr_of_uedges_minus_one = nbr_of_uedges-1;
 
             for (int i=0 ; i<nbr_of_uedges ; i++) {
                 pair<int,float> p;
@@ -63,17 +49,97 @@ class Graph {
         }
     }
 
+    float dijkstra(int source) {
+        float sum=0.0;
+        map<int,float> dist;  // keys contained in here are not yet visited
+        dist[source] = 0.0;
+        map<float, set<int>> invert_dist;   // to find the next node
+        invert_dist[0.0].insert(source);
+        /*Pair_comparison pc;
+        vector<pair<int,float>> v;*/
+        priority_queue<float> queue;  /* = priority_queue(pc, v);*/
+        queue.push(0.0);
+        set<int> seen;
+        float new_dist, old_dist, min_weight;
+        int current, child;    // current node
+        while(!queue.empty()) {
+            min_weight = queue.top();   
+            current = *invert_dist[min_weight].begin();  invert_dist[min_weight].erase(current);  if (invert_dist[min_weight].empty()) { invert_dist.erase(min_weight); queue.pop(); } seen.insert(current); cout<< "processing " << current << "\n";
+            for(set<pair<int,float>>::iterator it=edges[current].begin(); it!=edges[current].end(); it++) {
+                child = it->first;
+                if (seen.find(child)!=seen.end()) continue;
+                else {
+                    if (dist.find(child)!=dist.end()) {
+                        new_dist = dist[current] + it->second;
+                        old_dist = dist[child];
+                        if (new_dist < old_dist) {
+                            dist[child] = new_dist;
+                            invert_dist[old_dist].erase(child); 
+                            invert_dist[new_dist].insert(child); 
+                            queue.push(new_dist);
+                        }
+                    } 
+                    // stop if max_dist is reached
+                    if (dist[child] >= max_distance) 
+                        for (set<pair<int,float>>::iterator it2=edges[child].begin(); it2!=edges[child].end(); it2++)
+                            seen.insert(it2->first);
+                }
+            }
+        }
+
+        for (map<int,float>::iterator nodes=dist.begin(); nodes!=dist.end(); nodes++) {
+            sum += nodes->second;
+        }
+        return sum;
+
+
+        /*
+        map<int,float> dist;
+        dist[source] = 0.0;
+        set<int> queue;
+        queue.insert(source);
+        int current;
+        float new_dist; 
+        while(!queue.empty()) {
+            current = *queue.begin();   queue.erase(current);
+            for (set<pair<int,float>>::iterator it=edges[current].begin(); it!=edges[current].end(); it++){
+                new_dist = dist[current] + it->second;
+                if (dist.find(it->first)!=dist.end() && dist[it->first]>new_dist) {
+                    dist[it->first]=new_dist;
+                }
+            }
+        }
+        return 0.0;*/
+    }
+
+    void centrality(float md) {
+        float rank;
+        max_distance = md;
+        fstream output_rank_file;
+        for (map<int,set<pair<int,float>>>::iterator node=edges.begin(); node!=edges.end(); node++) {
+            rank = 1.0 / dijkstra(node->first) * nbr_of_uedges_minus_one;
+            output_rank_file.open(output_rank,ios::out); 
+            if (output_rank_file.is_open()){ 
+                output_rank_file << node->first << " " << rank << "\n";
+                output_rank_file.close();
+            } else cout << "Could not open output file for rank :  " << node->first << " " << rank << "\n";
+            rank = -1;
+        }
+            
+    }
+
     private:
-    int current_pos, nbr_of_uedges;
+    int current_pos, nbr_of_uedges, nbr_of_uedges_minus_one;
     map<int,set<pair<int,float>>> edges;
-    string input_file_name;
+    string input_file_name, output_rank;
     fstream input_file;
+    float max_distance;
 };
 
 int main(){
-
     Graph g = Graph("graph_cpp_.txt");
     g.read();
     g.print();
+    g.centrality(10000000);
     return 0;
 }

@@ -8,14 +8,6 @@
 
 using namespace std;
 
-class Pair_comparison {
-public:
-  bool operator() (const pair<int, float>& lhs, const pair<int,float>&rhs) const
-  {
-    return (lhs.second < rhs.second);
-  }
-};
-
 
 class Graph {
     public:

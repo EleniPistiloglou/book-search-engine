@@ -8,17 +8,11 @@
 
 using namespace std;
 
-class Pair_comparison {
-public:
-  bool operator() (const pair<int, float>& lhs, const pair<int,float>&rhs) const
-  {
-    return (lhs.second < rhs.second);
-  }
-};
-
 
 class Graph {
+  
     public:
+  
     Graph(string f) {input_file_name = f; current_pos = 0;}
     Graph(int n) {current_pos = 0; }
     void read() {
@@ -48,21 +42,40 @@ class Graph {
             }
         }
     }
+  
+     void centrality(float md) {
+        float rank;
+        max_distance = md;
+        fstream output_rank_file;
+        for (map<int,set<pair<int,float>>>::iterator node=edges.begin(); node!=edges.end(); node++) {
+            rank = 1.0 / dijkstra(node->first) * nbr_of_uedges_minus_one;
+            output_rank_file.open(output_rank,ios::out); 
+            if (output_rank_file.is_open()){ 
+                output_rank_file << node->first << " " << rank << "\n";
+                output_rank_file.close();
+            } else cout << "Could not open output file for rank :  " << node->first << " " << rank << "\n";
+            rank = -1;
+        }
+            
+    }
+
+    private:
 
     float dijkstra(int source) {
+      
         float sum=0.0;
         map<int,float> dist;  // keys contained in here are not yet visited
         dist[source] = 0.0;
         map<float, set<int>> invert_dist;   // to find the next node
         invert_dist[0.0].insert(source);
-        /*Pair_comparison pc;
-        vector<pair<int,float>> v;*/
-        priority_queue<float> queue;  /* = priority_queue(pc, v);*/
+        priority_queue<float> queue;  
         queue.push(0.0);
         set<int> seen;
         float new_dist, old_dist, min_weight;
         int current, child;    // current node
+      
         while(!queue.empty()) {
+          
             min_weight = queue.top();   
             current = *invert_dist[min_weight].begin();  invert_dist[min_weight].erase(current);  if (invert_dist[min_weight].empty()) { invert_dist.erase(min_weight); queue.pop(); } seen.insert(current); cout<< "processing " << current << "\n";
             for(set<pair<int,float>>::iterator it=edges[current].begin(); it!=edges[current].end(); it++) {
@@ -90,56 +103,25 @@ class Graph {
         for (map<int,float>::iterator nodes=dist.begin(); nodes!=dist.end(); nodes++) {
             sum += nodes->second;
         }
+      
         return sum;
-
-
-        /*
-        map<int,float> dist;
-        dist[source] = 0.0;
-        set<int> queue;
-        queue.insert(source);
-        int current;
-        float new_dist; 
-        while(!queue.empty()) {
-            current = *queue.begin();   queue.erase(current);
-            for (set<pair<int,float>>::iterator it=edges[current].begin(); it!=edges[current].end(); it++){
-                new_dist = dist[current] + it->second;
-                if (dist.find(it->first)!=dist.end() && dist[it->first]>new_dist) {
-                    dist[it->first]=new_dist;
-                }
-            }
-        }
-        return 0.0;*/
     }
 
-    void centrality(float md) {
-        float rank;
-        max_distance = md;
-        fstream output_rank_file;
-        for (map<int,set<pair<int,float>>>::iterator node=edges.begin(); node!=edges.end(); node++) {
-            rank = 1.0 / dijkstra(node->first) * nbr_of_uedges_minus_one;
-            output_rank_file.open(output_rank,ios::out); 
-            if (output_rank_file.is_open()){ 
-                output_rank_file << node->first << " " << rank << "\n";
-                output_rank_file.close();
-            } else cout << "Could not open output file for rank :  " << node->first << " " << rank << "\n";
-            rank = -1;
-        }
-            
-    }
-
-    private:
+  
     int current_pos, nbr_of_uedges, nbr_of_uedges_minus_one;
     map<int,set<pair<int,float>>> edges;
     string input_file_name, output_rank;
     fstream input_file;
     float max_distance;
+  
 };
 
+
 int main(){
+    cout << "--------------------------------- FIRST SIMPLE TEST ----------------------------------\n";
     Graph g = Graph("graph_cpp_.txt");
     g.read();
     g.print();
-    g.centrality(10000000);
+    cout << "The centrality rank is " << g.centrality(10000000) << "\n";
     return 0;
 }

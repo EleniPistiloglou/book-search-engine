@@ -29,7 +29,10 @@ class Graph {
 
             input_file.close();
         }  else  cout << "Problem with opening file.\n\n"; 
+        nbr_of_nodes = edges.size();
+        nbr_of_nodes_minus_one = nbr_of_nodes-1;
         cout << "\n *  1/2 graph loaded " << endl; 
+        cout << "\n    " << nbr_of_nodes << " nodes " << endl; 
         cout << "\n ** 2/2 adjacency list created " << endl << endl; 
     }
 
@@ -48,7 +51,7 @@ class Graph {
         dist[source] = 0.0;
         map<float, set<int>> invert_dist;   // to find the next node
         invert_dist[0.0].insert(source);
-        priority_queue<float> queue; 
+        priority_queue<float, vector<float>, greater<float> > queue;
         queue.push(0.0);
         set<int> seen;
         float new_dist, old_dist, min_weight;
@@ -58,63 +61,58 @@ class Graph {
 
             min_weight = queue.top();   //cout<<"\n\nmin weight: "<<min_weight<<"\n";
             current = *invert_dist[min_weight].begin();  invert_dist[min_weight].erase(current);  if (invert_dist[min_weight].empty()) { invert_dist.erase(min_weight); queue.pop(); } seen.insert(current); 
-            //cout<< "processing " << current << "\n";
+            //cout<< "\nprocessing " << current << "\n";
             for(set<pair<int,float>>::iterator it=edges[current].begin(); it!=edges[current].end(); it++) {
                 child = it->first; 
                 if (seen.find(child)!=seen.end()) continue;
                 else { //cout<<"child "<<child<<"\n";
-                    new_dist = dist[current] + it->second;
+                    new_dist = dist[current] + it->second; //cout<<"new "<<new_dist;
                     if (dist.find(child)!=dist.end()) {
-                        old_dist = dist[child];
+                        old_dist = dist[child]; //cout<< "old "<<old_dist<<endl; 
                         if (new_dist < old_dist) {
-                            dist[child] = new_dist;
+                            dist[child] = new_dist; 
                             invert_dist[old_dist].erase(child); 
                             invert_dist[new_dist].insert(child); 
                             queue.push(new_dist);  //cout<<"new dist "<<new_dist<<"\n";
                         }
                     } else {
-                        if (new_dist > max_distance) {
-                            // stop if max_dist is reached
-                            continue;
-                        } else {
-                            dist[child]=new_dist;
-                            invert_dist[new_dist].insert(child); 
-                            queue.push(new_dist);  //cout<<"new dist "<<new_dist<<"\n";
-                        }
+                        dist[child]=new_dist;
+                        invert_dist[new_dist].insert(child); 
+                        queue.push(new_dist);  //cout<<"new dist "<<new_dist<<"\n";
                     }
                 }
             }
         }
 
         for (map<int,float>::iterator nodes=dist.begin(); nodes!=dist.end(); nodes++) {
-            sum += nodes->second; //cout<<"sum "<<nodes->second<< "  ";
+            sum += nodes->second; 
         }
-
-        return sum;
+        //cout << sum << endl;
+        //cout << seen.size() << endl;
+        return sum;  
     }
 
-    void centrality(float md) {
+    void centrality() {
         float rank;
-        max_distance = md;   output_rank = "output_rank_"+to_string(max_distance)+"_"+input_file_name; 
+        output_rank = "output_rank_"+input_file_name; 
         fstream output_rank_file;
         for (map<int,set<pair<int,float>>>::iterator node=edges.begin(); node!=edges.end(); node++) {
-            rank = 1.0 / dijkstra(node->first) * nbr_of_uedges_minus_one;
-            output_rank_file.open(output_rank,ios::out); 
+            rank = 1.0 / dijkstra(node->first) * nbr_of_nodes_minus_one;
+            output_rank_file.open(output_rank,ios_base::app); 
             if (output_rank_file.is_open()){ 
                 output_rank_file << node->first << " " << rank << "\n";
                 output_rank_file.close();
             } else cout << "Could not open output file for rank :  " << node->first << " " << rank << "\n";
-            rank = -1;
-            cout << node->first << endl;
+            rank = 0.0;
+            //cout << node->first << endl;
         }     
     }
 
     private:
-    int current_pos, nbr_of_uedges, nbr_of_uedges_minus_one;
+    int current_pos, nbr_of_uedges, nbr_of_uedges_minus_one, nbr_of_nodes, nbr_of_nodes_minus_one;
     map<int,set<pair<int,float>>> edges;
     string input_file_name, output_rank;
     fstream input_file;
-    float max_distance;
 };
 
 int main(){
@@ -122,13 +120,32 @@ int main(){
     Graph g1 = Graph("graph_cpp.txt");
     g1.read();
     g1.print();
-    g1.centrality(1.0);
+    g1.centrality();
     cout << "--------------------------------------------------------------------------------------\n\n\n";
 
-    cout << "----------------------------------- REAL DATA TEST -----------------------------------\n";
-    Graph g = Graph("graph_cpp_05.txt");
-    g.read();
-    g.centrality(10.0);
+    cout << "-------------------------------- SECOND   SIMPLE TEST --------------------------------\n";
+    Graph g2 = Graph("graph_cpp_8v.txt");
+    g2.read();
+    g2.print();
+    g2.centrality();
+    cout << "--------------------------------------------------------------------------------------\n\n\n";
+
+    cout << "--------------------------------- REAL DATA TEST 7 -----------------------------------\n";
+    Graph g5 = Graph("graph_cpp_07_w0.txt");
+    g5.read();
+    g5.centrality();
+    cout << "--------------------------------------------------------------------------------------\n\n\n";
+
+    cout << "--------------------------------- REAL DATA TEST 5 -----------------------------------\n";
+    Graph g5 = Graph("graph_cpp_05_w0.txt");
+    g5.read();
+    g5.centrality();
+    cout << "--------------------------------------------------------------------------------------\n\n\n";
+
+    cout << "--------------------------------- REAL DATA TEST 3 -----------------------------------\n";
+    Graph g3 = Graph("graph_cpp_03_w0.txt");
+    g3.read();
+    g3.centrality();
     cout << "--------------------------------------------------------------------------------------\n\n\n";
 
     return 0;

@@ -1,10 +1,11 @@
-// import { createApp } from 'vue'
-// import the root component App from a single-file component.
-//import App from './App.vue'
-
 const routes = [
+    {
+        path: '/recomendations',
+        name: 'recomendations',
+        component: recomendations,
+      },
     {path: '/basic', component:basic},
-    {path: '/advanced', component:advanced}
+    {path: '/advanced', component:advanced},
 ]
 
 const router = new VueRouter({

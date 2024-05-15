@@ -1,19 +1,27 @@
+"""
+~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+~ This file is part of a project that was developped for the course `Développement d'Algorithmes pour des Applications Réticulaires` of the Master's degree 
+~ in Computer Science at Sorbonne University.
+~ 
+~ Author: Eleni Pistiloglou
+~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~  """
+
 # COLLECT THE UNICODE CHARACTERS
 
 from base64 import encode
 
-
-codes = set()
-with open("index.json") as f:
-    line = f.readline()
-    while line:
-        position = line.find('\\u')
-        #print(position)
-        if position != -1:
-            str = line[position:position+6]
-            codes.add(str)
+def collect_characters():
+    codes = set()
+    with open("index.json") as f:
         line = f.readline()
-print(codes)
+        while line:
+            position = line.find('\\u')
+            if position != -1:
+                str = line[position : position+6]
+                codes.add(str)
+            line = f.readline()
+    #print(codes)
+    return codes
 
 # BUILD A DICTIONARY
 
@@ -88,19 +96,25 @@ dictionary['\\u00ad'] = '-'
 dictionary['\\u0306'] = ''
 dictionary['\\u00d6'] = 'Ö'
 
-# REPLACE THEM WITH THE RESPECTIVE 
-src = open('index.json', 'r', encoding='utf-8')
-with open('index_decoded.json', 'w', encoding='utf-8') as dest:
-    line = src.readline()
-    while line:
-        print(line)
-        position=line.find('\\u')
-        while position != -1:
-            str = line[position:position+6]
-            if str in ['\\u0301', '\\u0302'] and line[position:position+7] in dictionary.keys():
-                str = line[position:position+7]
-            line = line.replace(str, dictionary[str])
-            position=line.find('\\u')
-        dest.write(line)
-        line = src.readline()
-src.close()
+def replace_characters(input_name='index.json', output_name='index_decoded.json'):
+    """
+    Encodes a file in utf-8.
+
+    Args:
+        input_name (string): The name of the input file.
+        output_name (string): The name of the output file.
+    """
+    input = open(input_name, 'r', encoding='utf-8')
+    with open(output_name, 'w', encoding='utf-8') as output:
+        line = input.readline()
+        while line:
+            position = line.find('\\u')
+            while position != -1:
+                s = line[position : position+6]
+                if s in ['\\u0301', '\\u0302'] and line[position : position+7] in dictionary.keys():
+                    s = line[position : position+7]
+                line = line.replace(s, dictionary[s])
+                position = line.find('\\u')
+            output.write(line)
+            line = input.readline()
+    input.close()

@@ -1,64 +1,65 @@
 """
-This file is part of a project that was developped for the course `Développement d'Algorithmes pour des Applications Réticulaires` of the Master's degree 
-in Computer Science at Sorbonne University.
-
-~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ BD initialization script ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+~ This file is part of a project that was developped for the course `Développement d'Algorithmes pour des Applications Réticulaires` of the Master's degree 
+~ in Computer Science at Sorbonne University.
 ~
 ~ Author: Eleni Pistiloglou
-~
-~ Inserts in the db table `documents` the id, title, authors, language and rank of each book.
-~ 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~  """
 
 
 import psycopg2 as db_connect
 import json
 
-host_name="localhost"
-db_user="postgres"
-db_password="280411020118"
-db_name="postgres"
+host_name = 'localhost'
+db_user = 'postgres'
+db_password = '280411020118'
+db_name = 'postgres'
 
 
-def flatten_string(l):
-    res = ''
+def flatten_string(l: list[str]) -> str:
+    flattened = ''
     for item in l:
-        res+=item
-    return res
+        flattened += item
+    return flattened
 
-def script1():
-    with open("index_decoded_clean.json", 'r', encoding="utf-8") as f:
-        file = flatten_string(f.readlines())
-        file_to_json = json.loads(file)
-        for i in range(2749):
-            """
-            print(file_to_json[i].get('id'))
-            print(file_to_json[i].get('title'))
-            print(file_to_json[i].get('authors'))
-            print(file_to_json[i].get('language'))
-            """
+def initialize_database(input_file_name='index_decoded_clean.json', nbr_of_items=2794):
+    """
+    Inserts in the database table `documents` the id, title, authors, language 
+    and rank of each book of the index.
+
+    Args:
+        input_file_name (string): the name of the file containing the index in json format.
+        nbr_of_items (int): the number of documents in the index. 
+    """
+    
+    with open(input_file_name, 'r', encoding='utf-8') as input_file:
+    
+        text = flatten_string(input_file.readlines())
+        index = json.loads(text)
+
+        for i in range(nbr_of_items):
             try:
                 connection = db_connect.connect(host=host_name,user=db_user,password=db_password,database=db_name,port=5432)
                 cursor = connection.cursor()
-                query = "insert into documents (doc_id,title,authors,language,rank) values ("+file_to_json[i].get('id')+", '"+file_to_json[i].get('title').replace("'"," ")+"', '"+file_to_json[i].get('authors').replace("'"," ")+"', '"+file_to_json[i].get('language')+"', -1);"
+                query = "insert into documents (doc_id, title, authors, language, rank) values (" + index[i].get('id') + ", '" + index[i].get('title').replace("'"," ") + "', '" + index[i].get('authors').replace("'"," ") + "', '" + index[i].get('language') + "', -1);"
                 cursor.execute(query) 
                 cursor.close()
                 connection.commit()
             except:
-                print(i)
+                print("ERROR: Error while retrieving document with id " + i)
                 connection.rollback()
+
             connection.close()
 
 def script2():
-    with open("index_decoded_clean.json", 'r', encoding="utf-8") as f:
-        file = flatten_string(f.readlines())
-        file_to_json = json.loads(file)
+    with open('index_decoded_clean.json', 'r', encoding='utf-8') as f:
+        text = flatten_string(f.readlines())
+        index = json.loads(text)
      
-        print(file_to_json[2748].get('id').replace("'"," "))
-        print(file_to_json[2748].get('title').replace("'"," "))
-        print(file_to_json[2748].get('authors').replace("'"," "))
-        print(file_to_json[2748].get('language').replace("'"," "))
-        
+        print(index[2748].get('id').replace("'"," "))
+        print(index[2748].get('title').replace("'"," "))
+        print(index[2748].get('authors').replace("'"," "))
+        print(index[2748].get('language').replace("'"," "))
 
 
-script1()
+initialize_database()

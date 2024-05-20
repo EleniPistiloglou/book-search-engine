@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+import db_credentials as db
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,12 +85,11 @@ WSGI_APPLICATION = 'DjangoAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres', 
-        'PASSWORD': '280411020118',
-        'HOST': 'localhost', 
-        'PORT': '5432'
-
+        'NAME': db.name,
+        'USER': db.user, 
+        'PASSWORD': db.password,
+        'HOST': db.host, 
+        'PORT': db.port
     }
 }
 

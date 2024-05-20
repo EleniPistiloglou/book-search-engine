@@ -17,11 +17,7 @@ import requests
 from sklearn.feature_extraction.text import CountVectorizer
 
 import psycopg2 as db_connect
-
-host_name = 'localhost'
-db_user = 'postgres'
-db_password = '123456789'
-db_name = 'postgres'
+import db_credentials as db
 
 
 def extract_keywords(id: int, lang='english') -> pd.DataFrame:
@@ -90,7 +86,7 @@ def index(findex_name='findex', jaccard_name='graph', id_start=64192, id_end=670
         id_first (int): The lowest book id in the database. 
     """
 
-    connection = db_connect.connect(host=host_name, user=db_user, password=db_password, database=db_name, port=5432)
+    connection = db_connect.connect(host=db.host, user=db.user, password=db.password, database=db.name, port=db.port)
     cursor = connection.cursor()
 
     unsuccessful = [] # ids of documents that couldn't be fetched from the server

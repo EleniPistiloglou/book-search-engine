@@ -8,11 +8,7 @@
 
 
 import psycopg2 as db_connect
-
-host_name = "localhost"
-db_user = "postgres"
-db_password = "280411020118"
-db_name = "postgres"
+import db_credentials as db
 
 
 def fetch_keywords(output_file_name='all_keywords.txt'):
@@ -27,7 +23,7 @@ def fetch_keywords(output_file_name='all_keywords.txt'):
 
         f.write('[')
 
-        connection = db_connect.connect(host=host_name, user=db_user, password=db_password, database=db_name, port=5432)
+        connection = db_connect.connect(host=db.host, user=db.user, password=db.password, database=db.name, port=5432)
         cursor = connection.cursor()
         query = "select keyword from findex group by keyword order by keyword;"
         cursor.execute(query) 

@@ -8,12 +8,8 @@
 
 
 import psycopg2 as db_connect
+import db_credentials as db
 import json
-
-host_name = 'localhost'
-db_user = 'postgres'
-db_password = '280411020118'
-db_name = 'postgres'
 
 
 def flatten_string(l: list[str]) -> str:
@@ -39,7 +35,7 @@ def initialize_database(input_file_name='index_decoded_clean.json', nbr_of_items
 
         for i in range(nbr_of_items):
             try:
-                connection = db_connect.connect(host=host_name,user=db_user,password=db_password,database=db_name,port=5432)
+                connection = db_connect.connect(host=db.host, user=db.user, password=db.password, database=db.name, port=db.port)
                 cursor = connection.cursor()
                 query = "insert into documents (doc_id, title, authors, language, rank) values (" + index[i].get('id') + ", '" + index[i].get('title').replace("'"," ") + "', '" + index[i].get('authors').replace("'"," ") + "', '" + index[i].get('language') + "', -1);"
                 cursor.execute(query) 

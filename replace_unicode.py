@@ -1,7 +1,7 @@
 """
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-~ This file is part of a project that was developped for the course `Développement d'Algorithmes pour des Applications Réticulaires` of the Master's degree 
-~ in Computer Science at Sorbonne University.
+~ This file is part of a project for the course `Développement d'Algorithmes pour des Applications Réticulaires`
+~ of the Master's degree in Computer Science at Sorbonne University.
 ~ 
 ~ Author: Eleni Pistiloglou
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~  """
@@ -10,9 +10,9 @@
 
 from base64 import encode
 
-def collect_characters():
+def collect_characters(input_file='index.json') -> set[str]:
     codes = set()
-    with open("index.json") as f:
+    with open(input_file) as f:
         line = f.readline()
         while line:
             position = line.find('\\u')
@@ -20,7 +20,6 @@ def collect_characters():
                 str = line[position : position+6]
                 codes.add(str)
             line = f.readline()
-    #print(codes)
     return codes
 
 # BUILD A DICTIONARY
@@ -96,16 +95,16 @@ dictionary['\\u00ad'] = '-'
 dictionary['\\u0306'] = ''
 dictionary['\\u00d6'] = 'Ö'
 
-def replace_characters(input_name='index.json', output_name='index_decoded.json'):
+def replace_characters(input_file='index.json', output_file='index_decoded.json'):
     """
     Encodes a file in utf-8.
 
     Args:
-        input_name (string): The name of the input file.
-        output_name (string): The name of the output file.
+        input_file (string): The name of the input file.
+        output_file (string): The name of the output file.
     """
-    input = open(input_name, 'r', encoding='utf-8')
-    with open(output_name, 'w', encoding='utf-8') as output:
+    input = open(input_file, 'r', encoding='utf-8')
+    with open(output_file, 'w', encoding='utf-8') as output:
         line = input.readline()
         while line:
             position = line.find('\\u')

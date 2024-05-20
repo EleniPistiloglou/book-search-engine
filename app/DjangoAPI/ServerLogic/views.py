@@ -13,28 +13,25 @@ db_name="postgres"
 @csrf_exempt
 def getBasicAPI(request, keyword=''):
 
-    if request.method=='GET':
+    if request.method == 'GET':
 
-        print(keyword)
         t = time.time()
         keywords = request.GET.get('keyword').lower().split(' ')
 
-        connection = db_connect.connect(host=host_name,user=db_user,password=db_password,database=db_name,port=5432)
+        connection = db_connect.connect(host=host_name, user=db_user, password=db_password, database=db_name, port=5432)
         cursor = connection.cursor()
 
         query = "select doc_id, title, authors, sum(rank) as s from documents inner join findex on doc_id=doc where "
         for k in keywords:
-            query += "keyword='"+k+"' or "
+            query += "keyword='" + k + "' or "
         query = query[:-4]
         query += " group by doc_id order by s desc;"
-        print(query)
 
         cursor.execute(query) 
         documents = cursor.fetchall()
         cursor.close()
         connection.close()
         print(time.time()-t, " seconds")
-        print(len(documents))
 
         return JsonResponse(documents, safe=False)
 
@@ -44,11 +41,11 @@ def or_subpatterns(s, regex=''):
 
 
 def getAdvancedAPI(request, regex=''):
-    if request.method=='GET':
+    if request.method == 'GET':
         t = time.time()
 
         regex = request.GET.get('regex').lower().split(' ')
-        if len(regex)==1:
+        if len(regex) == 1:
 
             regex = regex[0]
 
@@ -102,11 +99,10 @@ def getAdvancedAPI(request, regex=''):
 def getRecomendations(request):
     doc='65000'
     query = "select doc_id, title, authors, rank from graph inner join documents on doc2=doc_id where doc1="+doc+" order by rank desc limit 10;"
-    connection = db_connect.connect(host=host_name,user=db_user,password=db_password,database=db_name,port=5432)
+    connection = db_connect.connect(host=host_name, user=db_user, password=db_password, database=db_name, port=5432)
     cursor = connection.cursor()
     cursor.execute(query) 
     documents = cursor.fetchall()
     cursor.close()
     connection.close()
-    print(query)
     return JsonResponse(documents, safe=False)

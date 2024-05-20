@@ -1,7 +1,7 @@
 """
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-~ This file is part of a project that was developped for the course `Développement d'Algorithmes pour des Applications Réticulaires` of the Master's degree 
-~ in Computer Science at Sorbonne University.
+~ This file is part of a project for the course `Développement d'Algorithmes pour des Applications Réticulaires`
+~ of the Master's degree in Computer Science at Sorbonne University.
 ~ 
 ~ Author: Eleni Pistiloglou
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~  """
